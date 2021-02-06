@@ -46,7 +46,9 @@ func testSlackBackend(payload string) *httptest.Server {
 func TestSlackProviderDefaults(t *testing.T) {
 	p := testSlackProvider("")
 	assert.NotEqual(t, nil, p)
+	p.Configure("")
 	assert.Equal(t, "Slack", p.Data().ProviderName)
+	assert.Equal(t, "", p.Team)
 	assert.Equal(t, "https://slack.com/oauth/authorize",
 		p.Data().LoginURL.String())
 	assert.Equal(t, "https://slack.com/api/oauth.access",
@@ -81,6 +83,21 @@ func TestSlackProviderOverrides(t *testing.T) {
 	assert.Equal(t, "https://example.com/api/users.identity",
 		p.Data().ValidateURL.String())
 	assert.Equal(t, "identity.basic", p.Data().Scope)
+}
+
+func TestSlackProviderSetTeam(t *testing.T) {
+	p := testSlackProvider("")
+	assert.NotEqual(t, nil, p)
+	p.Configure("example")
+	assert.Equal(t, "Slack", p.Data().ProviderName)
+	assert.Equal(t, "example", p.Team)
+	assert.Equal(t, "https://slack.com/oauth/authorize",
+		p.Data().LoginURL.String())
+	assert.Equal(t, "https://slack.com/api/oauth.access",
+		p.Data().RedeemURL.String())
+	assert.Equal(t, "https://slack.com/api/users.identity",
+		p.Data().ValidateURL.String())
+	assert.Equal(t, "identity.basic,identity.email", p.Data().Scope)
 }
 
 func TestSlackProviderGetEmailAddress(t *testing.T) {

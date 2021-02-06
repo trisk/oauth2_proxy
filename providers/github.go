@@ -47,6 +47,7 @@ func NewGitHubProvider(p *ProviderData) *GitHubProvider {
 	}
 	return &GitHubProvider{ProviderData: p}
 }
+
 func (p *GitHubProvider) SetOrgTeam(org, team string) {
 	p.Org = org
 	p.Team = team

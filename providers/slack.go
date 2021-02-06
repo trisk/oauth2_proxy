@@ -10,6 +10,7 @@ import (
 
 type SlackProvider struct {
 	*ProviderData
+	Team string
 }
 
 func NewSlackProvider(p *ProviderData) *SlackProvider {
@@ -39,6 +40,27 @@ func NewSlackProvider(p *ProviderData) *SlackProvider {
 		p.Scope = "identity.basic,identity.email"
 	}
 	return &SlackProvider{ProviderData: p}
+}
+
+func (p *SlackProvider) Configure(team string) {
+	p.Team = team
+}
+
+// GetLoginURL with Slack-accepted oauth parameters
+func (p *SlackProvider) GetLoginURL(redirectURI, state string) string {
+	var a url.URL
+	a = *p.LoginURL
+	params, _ := url.ParseQuery(a.RawQuery)
+	params.Set("redirect_uri", redirectURI)
+	if p.Team != "" {
+		params.Add("team", p.Team)
+	}
+	params.Add("scope", p.Scope)
+	params.Set("client_id", p.ClientID)
+	params.Set("response_type", "code")
+	params.Add("state", state)
+	a.RawQuery = params.Encode()
+	return a.String()
 }
 
 func (p *SlackProvider) GetEmailAddress(s *SessionState) (string, error) {
