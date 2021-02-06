@@ -14,7 +14,7 @@ type ProviderData struct {
 	ProtectedResource *url.URL
 	ValidateURL       *url.URL
 	Scope             string
-	ApprovalPrompt    string
+	Prompt            string
 }
 
 func (p *ProviderData) Data() *ProviderData { return p }
